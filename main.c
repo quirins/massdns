@@ -850,12 +850,18 @@ void massdns_scan(massdns_context_t *context)
         exit(1);
     }
 
+        struct timeval now;
+        struct timeval last;
+	    //	gettimeofday(&now, NULL);
+	    	gettimeofday(&last, NULL);
     while (true)
     {
         while (hashmapSize(context->map) < context->cmd_args.hashmap_size && !feof(f))
         {
             if (0 <= getline(&line, &line_buflen, f))
             {
+		// time_t now = time(NULL);
+		// fprintf(stdout, "Read line! %ld \n", now);
                 trim_end(line);
                 line_len = strlen(line);
                 strtolower(line);
@@ -885,6 +891,13 @@ void massdns_scan(massdns_context_t *context)
                     gettimeofday(&lookup->next_lookup, NULL);
                     hashmapPut(context->map, value, lookup);
                 }
+	    	gettimeofday(&now, NULL);
+
+	    	if (timediff(&last, &now) > 1000){
+	    	gettimeofday(&last, NULL);
+        	while (massdns_receive_packet(sock, massdns_handle_packet, context));
+        	hashmapForEach(context->map, handle_domain, context);
+		}
 
             }
         }
