@@ -69,6 +69,7 @@ void print_help(char *file)
                     "  TXT\n"
                     "  CAA\n"
                     "  TLSA\n",
+                    "  SRV\n",
             file
     );
 }
@@ -122,6 +123,10 @@ int record_from_str(char *str)
     if (strcasecmp(str, "caa") == 0)
     {
         return LDNS_RR_TYPE_CAA;
+    }
+    if (strcasecmp(str, "srv") == 0)
+    {
+        return LDNS_RR_TYPE_SRV;
     }
     return 0;
 }
